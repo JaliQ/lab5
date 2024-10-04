@@ -1,47 +1,79 @@
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.Scanner;
 
 public class BookStore {
     private final String name;
     private List<Novel> novels;
+    private Map<String, Novel> novelMap;
+    private Set<String> keySet;
+    private List<String> keyList;
 
     // BookStore Constructor
-    public BookStore(String name) {
+    public BookStore(final String name) {
         this.name = name;
         this.novels = new ArrayList<>();
         populateNovels(); // Populating the ArrayList with given data
+        this.keySet = novelMap.keySet();
+        this.keyList = new ArrayList<>(keySet);
+        Collections.sort(keyList);
     }
 
     // Method to populate the novels list
     private void populateNovels() {
-        Scanner scanner = new Scanner(new File("books.csv"));
+        try (Scanner scanner = new Scanner(new File("C://Users//miste//IdeaProjects//Lab5//src//books.csv"))) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+
+                // Using regex to handle quoted fields that might contain commas
+                String[] data = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+
+                if (data.length == 3) {
+                    // Remove surrounding quotes from the title field, if present
+                    String title = data[0].trim().replaceAll("^\"|\"$", "");
+                    String author = data[1].trim();
+                    int year = Integer.parseInt(data[2].trim());
+                    novelMap.put(title, new Novel(title, author, year));
+
+                    novels.add(new Novel(title, author, year));
+                }
+            }
+        } catch (final FileNotFoundException e) {
+            throw new RuntimeException("CSV file not found", e);
+        }
     }
 
     // Method to print all titles in UPPERCASE
     public void printAllTitles() {
-        novels.forEach(novel -> System.out.println(novel.getTitle().toUpperCase()));
+        for (Novel novel : novels){
+            System.out.println(novel.getTitle().toUpperCase());
+        }
     }
 
     // Method to print all titles that contain the specified parameter
-    public void printBookTitle(String title) {
-        novels.stream()
-                .filter(novel -> novel.getTitle().toLowerCase().contains(title.toLowerCase()))
-                .forEach(novel -> System.out.println(novel.getTitle()));
+    public void printBookTitle(final String filter) {
+        for (Novel novel : novels){
+            if (novel.getTitle().toLowerCase().contains(filter.toLowerCase())){
+                System.out.println(novel.getTitle().toUpperCase());
+            }
+        }
     }
 
     // Method to print all titles in alphabetical order
     public void printTitlesInAlphaOrder() {
-        novels.stream()
-                .map(Novel::getTitle)
-                .sorted()
-                .forEach(System.out::println);
+        final ArrayList<Novel> sortedNovels;
+
+        sortedNovels = new ArrayList<>(novels);
+        sortedNovels.sort(Comparator.comparing(Novel::getTitle));
+
+        for (Novel novel : novels){
+            System.out.println(novel.getTitle().toUpperCase());
+        }
     }
 
     // Method to print all books from a specified decade
-    public void printGroupByDecade(int decade) {
+    public void printGroupByDecade(final int decade) {
         int startYear = (decade / 10) * 10;
         novels.stream()
                 .filter(novel -> novel.getYear() >= startYear && novel.getYear() < startYear + 10)
@@ -50,45 +82,80 @@ public class BookStore {
 
     // Method to find the longest title
     public Novel getLongest() {
-        return novels.stream()
-                .max(Comparator.comparingInt(novel -> novel.getTitle().length()))
-                .orElse(null);
+        Novel longest = novels.getFirst();
+        for (Novel novel : novels){
+            if (novel.getTitle().length() > longest.getTitle().length()){
+                longest = novel;
+            }
+        }
+        return longest;
     }
 
     // Method to check if there is a book written in a specified year
-    public boolean isThereABookWrittenBetween(int year) {
-        return novels.stream()
-                .anyMatch(novel -> novel.getYear() == year);
+    public boolean isThereABookWrittenBetween(final int year) {
+        for (Novel novel : novels){
+            if (novel.getYear() == year){
+                return true;
+            }
+        }
+        return false;
     }
 
     // Method to count how many books contain a specific word in their title
-    public long howManyBooksContain(String word) {
-        return novels.stream()
-                .filter(novel -> novel.getTitle().toLowerCase().contains(word.toLowerCase()))
-                .count();
+    public long howManyBooksContain(final String word) {
+        long result;
+        result = 0;
+
+        for (Novel novel : novels){
+            if (novel.getTitle().toLowerCase().contains(word.toLowerCase())){
+                result++;
+            }
+        }
+        return result;
     }
 
     // Method to calculate the percentage of books written between two years
-    public double whichPercentWrittenBetween(int first, int last) {
-        long totalBooks = novels.size();
-        long booksInRange = novels.stream()
-                .filter(novel -> novel.getYear() >= first && novel.getYear() <= last)
-                .count();
-        return (double) booksInRange / totalBooks * 100;
+    public double whichPercentWrittenBetween(final int first,final int last) {
+        long totalBooks;
+        long booksInRange;
+        double percentWritten;
+
+        totalBooks = novels.size();
+        booksInRange = 0;
+
+        for (Novel novel : novels){
+            if (novel.getYear() >= first && novel.getYear() <= last){
+                booksInRange ++;
+            }
+        }
+
+        percentWritten = (double) booksInRange / totalBooks * 100;
+        return percentWritten;
     }
 
     // Method to find the oldest book
     public Novel getOldestBook() {
-        return novels.stream()
-                .min(Comparator.comparingInt(Novel::getYear))
-                .orElse(null);
+        Novel oldest;
+        ArrayList<Novel> sortedNovels;
+
+        sortedNovels = new ArrayList<>(novels);
+        sortedNovels.sort(Comparator.comparing(Novel::getYear));
+        oldest = sortedNovels.get(0);
+
+        return oldest;
     }
 
     // Method to get books with a title of a specific length
-    public List<Novel> getBooksThisLength(int titleLength) {
-        return novels.stream()
-                .filter(novel -> novel.getTitle().length() == titleLength)
-                .collect(Collectors.toList());
+    public List<Novel> getBooksThisLength(final int titleLength) {
+        ArrayList<Novel> filteredTitles = new ArrayList<>();
+
+        for (Novel novel : novels){
+            if (novel.getTitle().length() == titleLength){
+                filteredTitles.add(novel);
+            }
+        }
+
+        return filteredTitles;
     }
 
     // Main method to test the functionality
