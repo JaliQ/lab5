@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.json.*;
+import java.util.Scanner;
 
 public class BookStore {
     private final String name;
@@ -17,16 +17,7 @@ public class BookStore {
 
     // Method to populate the novels list
     private void populateNovels() {
-        novels.add(new Novel("The Adventures of Augie March", "Saul Bellow", 1953));
-        novels.add(new Novel("All the King’s Men", "Robert Penn Warren", 1946));
-        novels.add(new Novel("American Pastoral", "Philip Roth", 1997));
-        novels.add(new Novel("An American Tragedy", "Theodore Dreiser", 1925));
-        novels.add(new Novel("Animal Farm", "George Orwell", 1946));
-        novels.add(new Novel("Appointment in Samarra", "John O'Hara", 1934));
-        novels.add(new Novel("Are You There God? It's Me, Margaret.", "Judy Blume", 1970));
-        novels.add(new Novel("The Assistant", "Bernard Malamud", 1957));
-        novels.add(new Novel("At Swim-Two-Birds", "Flann O'Brien", 1938));
-        novels.add(new Novel("Atonement", "Ian McEwan", 2002));
+        Scanner scanner = new Scanner(new File("books.csv"));
     }
 
     // Method to print all titles in UPPERCASE
