@@ -18,7 +18,11 @@ public class Novel{
      * @param year   the publication year of the novel, must be between {@code MIN_YEAR} and the current year
      * @throws IllegalArgumentException if any parameter is invalid
      */
-    public Novel(final String title,final String author, final int year) {
+    public Novel(final String title, final String author, final int year) 
+    {
+        validateTitle(title);
+        validateAuthor(author);
+        validateYear(year);
         this.title = title;
         this.author = author;
         this.year = year;
@@ -31,8 +35,11 @@ public class Novel{
      * @return the validated title
      * @throws IllegalArgumentException if the title is null or empty
      */
-    private String validateTitle(final String title) {
-        if (title == null || title.trim().isEmpty()) {
+    private String validateTitle(final String title) 
+    {
+        if (title == null ||
+         title.trim().isEmpty())
+         {
             throw new IllegalArgumentException("Title cannot be null or empty.");
         }
         return title;
@@ -45,8 +52,10 @@ public class Novel{
      * @return the validated author
      * @throws IllegalArgumentException if the author is null or empty
      */
-    private String validateAuthor(final String author) {
-        if (author == null || author.trim().isEmpty()) {
+    private String validateAuthor(final String author) 
+    {
+        if (author == null || author.trim().isEmpty())
+        {
             throw new IllegalArgumentException("Author cannot be null or empty.");
         }
         return author;
@@ -59,9 +68,12 @@ public class Novel{
      * @return the validated year
      * @throws IllegalArgumentException if the year is not between {@code MIN_YEAR} and the current year
      */
-    private int validateYear(final int year) {
+    private int validateYear(final int year) 
+    {
         int currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
-        if (year < MIN_YEAR || year > currentYear) {
+        if (year < MIN_YEAR ||
+            year > currentYear) 
+        {
             throw new IllegalArgumentException("Year must be between MIN_YEAR and " + currentYear + ".");
         }
         return year;
@@ -72,7 +84,8 @@ public class Novel{
      *
      * @return the title of the novel
      */
-    public String getTitle() {
+    public String getTitle() 
+    {
         return title;
     }
 
@@ -81,7 +94,8 @@ public class Novel{
      *
      * @return the author of the novel
      */
-    public String getAuthor() {
+    public String getAuthor() 
+    {
         return author;
     }
 
@@ -90,7 +104,8 @@ public class Novel{
      *
      * @return the publication year of the novel
      */
-    public int getYear() {
+    public int getYear() 
+    {
         return year;
     }
 }
