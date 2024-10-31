@@ -1,3 +1,5 @@
+package ca.bc.comp2522.lab06;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;

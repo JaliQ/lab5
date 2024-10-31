@@ -1,3 +1,5 @@
+package ca.bc.comp2522.lab06;
+
 /**
  * Class represents novel
  * @author Alex He
